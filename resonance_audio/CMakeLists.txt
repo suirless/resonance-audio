@@ -29,6 +29,8 @@ if (UNIX)
     set_target_properties(PffftObj PROPERTIES COMPILE_FLAGS -fPIC)
 endif (UNIX)
 
+target_compile_features(PffftObj PUBLIC cxx_std_11)
+
 # Build SADIE HRTF database.
 set(SADIE_HRTFS_DIR "${PROJECT_SOURCE_DIR}/third_party/SADIE_hrtf_database/generated/" CACHE PATH "Path to SADIE_hrtf_database library")
 set(SADIE_HRTFS_INCLUDE_DIR ${SADIE_HRTFS_DIR})
@@ -37,6 +39,7 @@ set(SADIE_HRTFS_SOURCE
         ${SADIE_HRTFS_DIR}/hrtf_assets.h
         )
 add_library(SadieHrtfsObj OBJECT ${SADIE_HRTFS_SOURCE})
+target_compile_features(SadieHrtfsObj PUBLIC cxx_std_11)
 
 # Build Resonance Audio.
 set(RA_SOURCES
@@ -214,18 +217,22 @@ add_library(ResonanceAudioObj OBJECT ${RA_SOURCES})
 target_include_directories(ResonanceAudioObj PRIVATE ${PROJECT_SOURCE_DIR}/resonance_audio/)
 target_include_directories(ResonanceAudioObj PRIVATE ${EIGEN3_INCLUDE_DIR}/)
 target_include_directories(ResonanceAudioObj PRIVATE ${PFFFT_INCLUDE_DIR}/)
-
+target_compile_features(ResonanceAudioObj PUBLIC cxx_std_11)
 
 if (BUILD_RESONANCE_AUDIO_API)
     # Build shared library
     add_library(ResonanceAudioShared SHARED $<TARGET_OBJECTS:ResonanceAudioObj>
             $<TARGET_OBJECTS:SadieHrtfsObj>
             $<TARGET_OBJECTS:PffftObj>)
+			
+	target_compile_features(ResonanceAudioShared PUBLIC cxx_std_11)
 
     # Build static library
     add_library(ResonanceAudioStatic STATIC $<TARGET_OBJECTS:ResonanceAudioObj>
             $<TARGET_OBJECTS:SadieHrtfsObj>
             $<TARGET_OBJECTS:PffftObj>)
+			
+	target_compile_features(ResonanceAudioStatic PUBLIC cxx_std_11)
 
     set(RA_INSTALL_DIR "${INSTALL_DIR}/resonance_audio/")
     install(TARGETS ResonanceAudioStatic ResonanceAudioShared
@@ -310,6 +317,8 @@ if (BUILD_RESONANCE_AUDIO_TESTS)
                                            $<TARGET_OBJECTS:ResonanceAudioObj>
                                            $<TARGET_OBJECTS:SadieHrtfsObj>
                                            $<TARGET_OBJECTS:PffftObj>)
+	
+	target_compile_features(ResonanceAudioUnitTests PUBLIC cxx_std_11)
 
     target_include_directories(ResonanceAudioUnitTests PRIVATE "${EIGEN3_INCLUDE_DIR}/")
     target_include_directories(ResonanceAudioUnitTests PRIVATE "${PFFFT_INCLUDE_DIR}/")

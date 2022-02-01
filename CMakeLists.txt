@@ -23,6 +23,7 @@ macro(configure_msvc_runtime)
         else ()
             SET(MSVC_RUNTIME_FLAG "/MD")
         endif ()
+		
         message(STATUS "MSVC Runtime flag: ${MSVC_RUNTIME_FLAG}")
         set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${MSVC_RUNTIME_FLAG}" CACHE INTERNAL "" FORCE)
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${MSVC_RUNTIME_FLAG}d" CACHE INTERNAL "" FORCE)
@@ -67,15 +68,20 @@ set(INSTALL_DIR "${PROJECT_SOURCE_DIR}/install" CACHE PATH "Install path")
 
 set(RA_SOURCE_DIR ${PROJECT_SOURCE_DIR}/resonance_audio/)
 
-use_cxx11()
+# use_cxx11()
+# Please, use cxx_std_11 for every target instead global language setup
 if (BUILD_RESONANCE_AUDIO_TESTS OR BUILD_GEOMETRICAL_ACOUSTICS_TESTS)
     enable_testing()
 
     set(GTEST_DIR "${PROJECT_SOURCE_DIR}/third_party/googletest/" CACHE PATH "Path to GTest library")
+	
     # Compile Google Test as an object library
     add_library(gtest OBJECT "${GTEST_DIR}/googlemock/src/gmock-all.cc"
             "${GTEST_DIR}/googletest/src/gtest-all.cc"
             "${GTEST_DIR}/googletest/src/gtest_main.cc")
+			
+	target_compile_features(gtest PUBLIC cxx_std_11)
+	
     target_include_directories(gtest PUBLIC "${GTEST_DIR}/googlemock/")
     target_include_directories(gtest PUBLIC "${GTEST_DIR}/googlemock/include")
     target_include_directories(gtest PUBLIC "${GTEST_DIR}/googletest/")
@@ -98,7 +104,7 @@ elseif (UNIX)
 endif ()
 
 # Add Eigen3.
-set(EIGEN3_DIR "${PROJECT_SOURCE_DIR}/third_party/eigen/" CACHE PATH "Path to eigen3 library")
+set(EIGEN3_DIR "${PROJECT_SOURCE_DIR}/third_party/libeigen/" CACHE PATH "Path to eigen3 library")
 set(EIGEN3_INCLUDE_DIR ${EIGEN3_DIR})
 add_definitions(-DEIGEN_MPL2_ONLY)
 

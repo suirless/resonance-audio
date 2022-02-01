@@ -1,0 +1,9 @@
+[submodule "third_party/libeigen"]
+	path = third_party/libeigen
+	url = https://github.com/suirless/libeigen.git
+[submodule "third_party/pffft"]
+	path = third_party/pffft
+	url = https://bitbucket.org/jpommier/pffft.git
+[submodule "third_party/googletest"]
+	path = third_party/googletest
+	url = https://github.com/google/googletest.git
